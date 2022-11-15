@@ -19,6 +19,7 @@ public class Cliente extends Thread {
         this.puerto_server = puerto_server;
         this.ip_server = InetAddress.getByName(server_host);
         this.socket = new DatagramSocket();
+        socket.setSoTimeout(5000);//se setea el time out
     }
 
     @Override
@@ -70,7 +71,9 @@ public class Cliente extends Thread {
     private void aLaEscucha() throws IOException {
         byte[] buffer = new byte[1024];
         DatagramPacket datagrama = new DatagramPacket(buffer, buffer.length);
-        socket.receive(datagrama);
+        try{socket.receive(datagrama);}catch (SocketTimeoutException e){
+            System.err.print("Time out ");
+        }
         String mensaje = new String(datagrama.getData());
         System.out.println(mensaje.replace("\u0000",""));
     }
