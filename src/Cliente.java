@@ -35,6 +35,11 @@ public class Cliente extends Thread {
         }
     }
 
+    public static void main(String[] args) throws SocketException, UnknownHostException {
+        Cliente cliente = new Cliente(Integer.valueOf(args[0]), args[1]);
+        cliente.start();
+    }
+
     /**
      * pregunta por consola el mensaje que se va a enviar
      * @return el mensaje que va a enviar el usuario

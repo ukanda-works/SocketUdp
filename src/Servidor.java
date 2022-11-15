@@ -1,8 +1,5 @@
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
+import java.net.*;
 
 public class Servidor extends Thread{
     private int puerto;
@@ -24,16 +21,19 @@ public class Servidor extends Thread{
         launchServer();
     }
 
+    public static void main(String[] args) throws SocketException {
+        Servidor servidor = new Servidor(Integer.valueOf(args[0]));
+        servidor.start();
+    }
     /**
      * Lanza el servidor y lo deja a la espera de recibir un paquete
      */
     public void launchServer(){
-        System.out.println("Servidor: a la espera y listo para recibir:");
+        System.out.println("Servidor: a la espera y listo para recibir en el puerto "+socket.getLocalPort());
         while (true){
         try {
-            DatagramPacket peticion = new DatagramPacket(buffer, buffer.length); //declaramos el paquete que vamos a recibir
+            DatagramPacket peticion = new DatagramPacket(buffer, buffer.length);//declaramos el paquete que vamos a recibir
             socket.receive(peticion);//se queda a la espera de recibir un paquete
-
 
             System.out.println("Servidor: mensaje recivido: ");
             String mensaje = new String(peticion.getData());//se recoge la data del paquete udp
