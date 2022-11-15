@@ -59,12 +59,19 @@ public class Cliente extends Thread {
         try {
             DatagramPacket paqueteEnviado = new DatagramPacket(buffer, buffer.length, ip_server, puerto_server); // se crea el paquete a enviar usando el buffer
             socket.send(paqueteEnviado);//se envia por medio del socket
+            aLaEscucha();
             sleep(2000);//se detiene 2 segundos
-
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+    }
+    private void aLaEscucha() throws IOException {
+        byte[] buffer = new byte[1024];
+        DatagramPacket datagrama = new DatagramPacket(buffer, buffer.length);
+        socket.receive(datagrama);
+        String mensaje = new String(datagrama.getData());
+        System.out.println(mensaje.replace("\u0000",""));
     }
 }

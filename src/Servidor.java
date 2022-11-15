@@ -1,5 +1,6 @@
 import java.io.IOException;
 import java.net.*;
+import java.time.LocalDateTime;
 
 public class Servidor extends Thread{
     private int puerto;
@@ -29,26 +30,40 @@ public class Servidor extends Thread{
      * Lanza el servidor y lo deja a la espera de recibir un paquete
      */
     public void launchServer(){
-        System.out.println("Servidor: a la espera y listo para recibir en el puerto "+socket.getLocalPort());
-        while (true){
+
         try {
-            DatagramPacket peticion = new DatagramPacket(buffer, buffer.length);//declaramos el paquete que vamos a recibir
-            socket.receive(peticion);//se queda a la espera de recibir un paquete
-
-            System.out.println("Servidor: mensaje recivido: ");
-            String mensaje = new String(peticion.getData());//se recoge la data del paquete udp
-            System.out.println(mensaje.replace("\u0000",""));//mostramos el contenido por pantalla
-
-            int puertoCli = peticion.getPort();//cogemos el puerto que ha usado el cliente para mandar el paquete
-            InetAddress ipCli = peticion.getAddress();//cogemos la ip que ha usado para enviar el paquete
-            System.out.println("Servidor: El cliente se ha comunicado por la direccion "+ipCli+":"+puertoCli);
-
+            DatagramPacket datagrama = new DatagramPacket(buffer, buffer.length);//declaramos el paquete que vamos a recibir
+            aLaEscucha(datagrama);
         } catch (SocketException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
+
+    public void aLaEscucha(DatagramPacket datagrama) throws IOException {
+        System.out.println("Servidor: a la espera y listo para recibir en el puerto "+socket.getLocalPort());
+        socket.receive(datagrama);//se queda a la espera de recibir un paquete
+        procesar(datagrama);
+    }
+
+    public void procesar(DatagramPacket datagrama) throws IOException {
+        System.out.println("Servidor: mensaje recivido: ");
+        String mensaje = new String(datagrama.getData());//se recoge la data del paquete udp
+        System.out.println(mensaje.replace("\u0000",""));//mostramos el contenido por pantalla
+        devolverDayTIme(datagrama);
+
+    }
+
+    public void devolverDayTIme(DatagramPacket datagrama) throws IOException {
+        int puertoCli = datagrama.getPort();//cogemos el puerto que ha usado el cliente para mandar el paquete
+        InetAddress ipCli = datagrama.getAddress();//cogemos la ip que ha usado para enviar el paquete
+        System.out.println("Servidor: Enviando hora a "+ipCli+":"+puertoCli);
+        byte[] buffer = LocalDateTime.now().toString().getBytes();
+        socket.send(new DatagramPacket(buffer, buffer.length,ipCli,puertoCli));
+        try {sleep(500);}
+        catch (InterruptedException e) {throw new RuntimeException(e);}
+        aLaEscucha(datagrama);
     }
 
 
