@@ -6,12 +6,12 @@ public class Main {
 
 
             switch (args[0]){
-                case "cli":
-                    Cliente cli = new Cliente(Integer.valueOf(args[2]),args[1]);
+                case "cliente":
+                    Cliente cli = new Cliente(Integer.valueOf(args[1]),args[2]);
                     cli.start();
                     break;
-                case "ser":
-                    Servidor ser = new Servidor(Integer.valueOf(args[2]));
+                case "servidor":
+                    Servidor ser = new Servidor(Integer.valueOf(args[1]));
                     ser.start();
                     break;
                 default:
